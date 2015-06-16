@@ -15,13 +15,18 @@ module.exports = function (opts) {
 		        chunks.push(chunk);
 		        write(chunk);
 		    };
-		    res.end = function (chunk) {
+		    res.end = function (chunk, encoding) {
 		        if (chunk) {
 		            chunks.push(chunk);
 		        }
-		        var ret = minifier(chunks.join(''), options);
-		        write(ret);
-		        end();
+		        var body = minifier(chunks.join(''), options);
+		        var len = Buffer.byteLength(body, 'utf8');
+		        if (len) {
+		        	res.setHeader('Content-Length', len);
+		        }
+		        end(body, encoding);
+		        res.write = write;
+		        res.end = end;
 		    };
 		}
 		next();
