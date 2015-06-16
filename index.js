@@ -13,14 +13,15 @@ module.exports = function (opts) {
 		    var chunks = [];
 		    res.write = function (chunk) {
 		        chunks.push(chunk);
+		        write(chunk);
 		    };
 		    res.end = function (chunk) {
 		        if (chunk) {
 		            chunks.push(chunk);
 		        }
 		        var ret = minifier(chunks.join(''), options);
-		        res.setHeader('content-length', ret.length);
-		        end(ret);
+		        write(ret);
+		        end();
 		    };
 		}
 		next();
